@@ -1,7 +1,7 @@
-import { Action, ActionCreator, Reducer } from "redux";
+import { Reducer } from "redux";
 
 import { assert } from "./utils/debug";
-import { createAction } from "./utils/redux";
+import { Action, createAction } from "./utils/redux";
 
 export enum FetchStatus {
   NotStarted,
@@ -9,8 +9,9 @@ export enum FetchStatus {
   Completed,
 }
 
-interface State {
+interface State<D> {
   status: FetchStatus;
+  data: D | undefined;
 }
 
 export enum ActionType {
@@ -23,14 +24,15 @@ export class Actions {
     return createAction(ActionType.Start);
   }
 
-  public static complete(): Action<ActionType.Complete> {
-    return createAction(ActionType.Complete);
+  public static complete<D>(data: D): Action<ActionType.Complete, { data: D }> {
+    return createAction(ActionType.Complete, { data });
   }
 }
 
-export const reduce: Reducer<State, Action<ActionType>> = (state, action) => {
+type FetchReducer<D = any> = Reducer<State<D>, Action<ActionType, D>>;
+export const reduce: FetchReducer = (state, action) => {
   if (!state) {
-    return { status: FetchStatus.NotStarted };
+    return { status: FetchStatus.NotStarted, data: undefined };
   }
   switch (action.type) {
     case ActionType.Start:
@@ -39,6 +41,7 @@ export const reduce: Reducer<State, Action<ActionType>> = (state, action) => {
         "fetch already started, cannot start again",
       );
       return {
+        ...state,
         status: FetchStatus.Started,
       };
 
@@ -48,7 +51,9 @@ export const reduce: Reducer<State, Action<ActionType>> = (state, action) => {
         "can only complete fetch after started",
       );
       return {
+        ...state,
         status: FetchStatus.Completed,
+        data: action.payload.data,
       };
 
     default:
