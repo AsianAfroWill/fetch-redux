@@ -28,7 +28,7 @@ export class Actions {
   }
 }
 
-export const reducer: Reducer<State, Action<ActionType>> = (state, action) => {
+export const reduce: Reducer<State, Action<ActionType>> = (state, action) => {
   if (!state) {
     return { status: FetchStatus.NotStarted };
   }
