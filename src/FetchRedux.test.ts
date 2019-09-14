@@ -4,10 +4,11 @@ describe("FetchRedux", () => {
   describe("reducer", () => {
     const initialState = {
       status: FetchStatus.NotStarted,
+      data: undefined,
     };
 
     it("initializes", () => {
-      expect(reduce(undefined, { type: "" as any })).toEqual(initialState);
+      expect(reduce(undefined, {} as any)).toEqual(initialState);
     });
 
     describe("not started state", () => {
@@ -18,13 +19,14 @@ describe("FetchRedux", () => {
       });
 
       it("throws if reducing complete action", () => {
-        expect(() => reduce(initialState, Actions.complete())).toThrow();
+        expect(() => reduce(initialState, Actions.complete({}))).toThrow();
       });
     });
 
     describe("started state", () => {
       const startedState = {
         status: FetchStatus.Started,
+        data: undefined,
       };
 
       it("throws on start action", () => {
@@ -32,8 +34,10 @@ describe("FetchRedux", () => {
       });
 
       it("reduces complete action to completed state", () => {
-        expect(reduce(startedState, Actions.complete())).toEqual({
+        const data = {};
+        expect(reduce(startedState, Actions.complete(data))).toEqual({
           status: FetchStatus.Completed,
+          data,
         });
       });
     });
@@ -41,16 +45,18 @@ describe("FetchRedux", () => {
     describe("completed state", () => {
       const completedState = {
         status: FetchStatus.Completed,
+        data: {},
       };
 
       it("reduces start action to started state", () => {
         expect(reduce(completedState, Actions.start())).toEqual({
           status: FetchStatus.Started,
+          data: completedState.data,
         });
       });
 
       it("throws on complete action", () => {
-        expect(() => reduce(completedState, Actions.complete())).toThrow();
+        expect(() => reduce(completedState, Actions.complete({}))).toThrow();
       });
     });
   });
