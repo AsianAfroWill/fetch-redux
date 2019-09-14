@@ -3,13 +3,13 @@ import { Action, ActionCreator, Reducer } from "redux";
 import { assert } from "./utils/debug";
 import { createAction } from "./utils/redux";
 
-export enum ApiState {
+export enum FetchStatus {
   NotStarted,
   Started,
 }
 
 interface State {
-  status: ApiState;
+  status: FetchStatus;
 }
 
 export enum ActionType {
@@ -24,16 +24,16 @@ export class Actions {
 
 export const reducer: Reducer<State, Action<ActionType>> = (state, action) => {
   if (!state) {
-    return { status: ApiState.NotStarted };
+    return { status: FetchStatus.NotStarted };
   }
   switch (action.type) {
     case ActionType.Start:
       assert(
-        state.status !== ApiState.Started,
+        state.status !== FetchStatus.Started,
         "API already started, cannot start again",
       );
       return {
-        status: ApiState.Started,
+        status: FetchStatus.Started,
       };
       break;
 

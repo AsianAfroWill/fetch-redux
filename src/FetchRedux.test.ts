@@ -1,9 +1,9 @@
-import { Actions, ApiState, reducer } from "./FetchRedux";
+import { Actions, FetchStatus, reducer } from "./FetchRedux";
 
 describe("FetchRedux", () => {
   describe("reducer", () => {
     const initialState = {
-      status: ApiState.NotStarted,
+      status: FetchStatus.NotStarted,
     };
 
     it("initializes", () => {
@@ -13,14 +13,14 @@ describe("FetchRedux", () => {
     describe("initial state", () => {
       it("reduces start action to started state", () => {
         expect(reducer(initialState, Actions.start())).toEqual({
-          status: ApiState.Started,
+          status: FetchStatus.Started,
         });
       });
     });
 
     describe("started state", () => {
       const startedState = {
-        status: ApiState.Started,
+        status: FetchStatus.Started,
       };
 
       it("throws on start action", () => {
