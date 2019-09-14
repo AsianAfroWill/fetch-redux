@@ -1,7 +1,7 @@
-import { action } from "./redux";
+import { createAction } from "./redux";
 
 describe("redux", () => {
   it("generates an identity action", () => {
-    expect(action("someAction")).toEqual({ type: "someAction" });
+    expect(createAction("someAction")).toEqual({ type: "someAction" });
   });
 });
