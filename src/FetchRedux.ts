@@ -24,18 +24,22 @@ export enum ActionType {
 }
 
 export class Actions {
-  public static start(): Action<ActionType.Start> {
-    return createAction(ActionType.Start);
+  public static start(url: string): Action<ActionType.Start, { url: string }> {
+    return createAction(ActionType.Start, { url });
   }
 
-  public static complete<D>(data: D): Action<ActionType.Complete, { data: D }> {
-    return createAction(ActionType.Complete, { data });
+  public static complete<D>(
+    url: string,
+    data: D,
+  ): Action<ActionType.Complete, { url: string; data: D }> {
+    return createAction(ActionType.Complete, { url, data });
   }
 
   public static error(
+    url: string,
     error: RestStatus,
-  ): Action<ActionType.Error, { error: RestStatus }> {
-    return createAction(ActionType.Error, { error });
+  ): Action<ActionType.Error, { url: string; error: RestStatus }> {
+    return createAction(ActionType.Error, { url, error });
   }
 }
 

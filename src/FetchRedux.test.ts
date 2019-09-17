@@ -2,6 +2,7 @@ import { Actions, FetchStatus, reduce } from "./FetchRedux";
 import RestStatus from "./RestStatus";
 
 describe("FetchRedux", () => {
+  const someUrl = "some-url";
   describe("reducer", () => {
     const initialState = {
       status: FetchStatus.NotStarted,
@@ -20,17 +21,21 @@ describe("FetchRedux", () => {
 
     describe("not started state", () => {
       it("reduces start action to started state", () => {
-        expect(reduce(initialState, Actions.start())).toEqual({
+        expect(reduce(initialState, Actions.start(someUrl))).toEqual({
           status: FetchStatus.Started,
         });
       });
 
       it("throws on complete action", () => {
-        expect(() => reduce(initialState, Actions.complete({}))).toThrow();
+        expect(() =>
+          reduce(initialState, Actions.complete(someUrl, {})),
+        ).toThrow();
       });
 
       it("throws on error action", () => {
-        expect(() => reduce(initialState, Actions.error(someError))).toThrow();
+        expect(() =>
+          reduce(initialState, Actions.error(someUrl, someError)),
+        ).toThrow();
       });
     });
 
@@ -42,23 +47,25 @@ describe("FetchRedux", () => {
       };
 
       it("throws on start action", () => {
-        expect(() => reduce(startedState, Actions.start())).toThrow();
+        expect(() => reduce(startedState, Actions.start(someUrl))).toThrow();
       });
 
       it("reduces complete action to completed state", () => {
         const data = {};
-        expect(reduce(startedState, Actions.complete(data))).toEqual({
+        expect(reduce(startedState, Actions.complete(someUrl, data))).toEqual({
           status: FetchStatus.Completed,
           data,
         });
       });
 
       it("reduces error action to error state", () => {
-        expect(reduce(startedState, Actions.error(someError))).toEqual({
-          status: FetchStatus.Error,
-          data: startedState.data,
-          error: someError,
-        });
+        expect(reduce(startedState, Actions.error(someUrl, someError))).toEqual(
+          {
+            status: FetchStatus.Error,
+            data: startedState.data,
+            error: someError,
+          },
+        );
       });
     });
 
@@ -70,19 +77,21 @@ describe("FetchRedux", () => {
       };
 
       it("reduces start action to started state", () => {
-        expect(reduce(completedState, Actions.start())).toEqual({
+        expect(reduce(completedState, Actions.start(someUrl))).toEqual({
           status: FetchStatus.Started,
           data: completedState.data,
         });
       });
 
       it("throws on complete action", () => {
-        expect(() => reduce(completedState, Actions.complete({}))).toThrow();
+        expect(() =>
+          reduce(completedState, Actions.complete(someUrl, {})),
+        ).toThrow();
       });
 
       it("throws on error action", () => {
         expect(() =>
-          reduce(completedState, Actions.error(someError)),
+          reduce(completedState, Actions.error(someUrl, someError)),
         ).toThrow();
       });
     });
@@ -98,7 +107,7 @@ describe("FetchRedux", () => {
       };
 
       it("reduces start action to started state", () => {
-        expect(reduce(errorState, Actions.start())).toEqual({
+        expect(reduce(errorState, Actions.start(someUrl))).toEqual({
           status: FetchStatus.Started,
           data: errorState.data,
           error: undefined,
@@ -106,11 +115,15 @@ describe("FetchRedux", () => {
       });
 
       it("throws on complete action", () => {
-        expect(() => reduce(errorState, Actions.complete({}))).toThrow();
+        expect(() =>
+          reduce(errorState, Actions.complete(someUrl, {})),
+        ).toThrow();
       });
 
       it("throws on error action", () => {
-        expect(() => reduce(errorState, Actions.error(someError))).toThrow();
+        expect(() =>
+          reduce(errorState, Actions.error(someUrl, someError)),
+        ).toThrow();
       });
     });
   });
