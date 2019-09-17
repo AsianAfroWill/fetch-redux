@@ -11,16 +11,16 @@ export enum FetchStatus {
   Error,
 }
 
-interface State<D> {
+export interface State<D> {
   status: FetchStatus;
   data: D | undefined;
   error: RestStatus | undefined;
 }
 
 export enum ActionType {
-  Start = "start",
-  Complete = "complete",
-  Error = "error",
+  Start = "fetch:start",
+  Complete = "fetch:complete",
+  Error = "fetch:error",
 }
 
 export class Actions {
