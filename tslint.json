@@ -10,7 +10,7 @@
       true,
       {
         "grouped-imports": true,
-        "groups": ["^[^./][^/]*$", "^[^.]", "^\\."]
+        "groups": ["^(@[^/]+/)?[^./][^/]*$", "^[^.]", "^\\."]
       }
     ],
     "semicolon": [true, "always"]
