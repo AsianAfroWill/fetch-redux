@@ -39,15 +39,14 @@ export class Actions {
   }
 }
 
+const initialState = {
+  status: FetchStatus.NotStarted,
+  data: undefined,
+  error: undefined,
+};
+
 type FetchReducer<D = any> = Reducer<State<D>, Action<ActionType, D>>;
-export const reduce: FetchReducer = (state, action) => {
-  if (!state) {
-    return {
-      status: FetchStatus.NotStarted,
-      data: undefined,
-      error: undefined,
-    };
-  }
+export const reduce: FetchReducer = (state = initialState, action) => {
   switch (action.type) {
     case ActionType.Start:
       assert(
@@ -83,6 +82,6 @@ export const reduce: FetchReducer = (state, action) => {
       };
 
     default:
-      throw new Error(`Unknown action type: ${action.type}`);
+      return state;
   }
 };
