@@ -27,7 +27,7 @@ describe("FetchManagerRedux", () => {
   it("manages successful fetch", (done) => {
     fetchMock.mock(someUrl, someResult);
 
-    const fetchPromise = reduxStore.dispatch(Actions.fetch(someUrl));
+    const fetchPromise = reduxStore.dispatch(Actions.fetch(someUrl))!;
     expect(select(reduxStore.getState(), someUrl)).toEqual({
       status: FetchStatus.Started,
       data: undefined,
@@ -50,7 +50,7 @@ describe("FetchManagerRedux", () => {
   it("manages fetch with not ok status", (done) => {
     fetchMock.mock(someUrl, 500);
 
-    const fetchPromise = reduxStore.dispatch(Actions.fetch(someUrl));
+    const fetchPromise = reduxStore.dispatch(Actions.fetch(someUrl))!;
     expect(select(reduxStore.getState(), someUrl)).toEqual({
       status: FetchStatus.Started,
       data: undefined,
@@ -81,7 +81,7 @@ describe("FetchManagerRedux", () => {
     const rejectReason = "reasons";
     fetchMock.mock(someUrl, Promise.reject(rejectReason));
 
-    const fetchPromise = reduxStore.dispatch(Actions.fetch(someUrl));
+    const fetchPromise = reduxStore.dispatch(Actions.fetch(someUrl))!;
     expect(select(reduxStore.getState(), someUrl)).toEqual({
       status: FetchStatus.Started,
       data: undefined,
@@ -106,5 +106,12 @@ describe("FetchManagerRedux", () => {
       )
       .catch((reason) => fail(reason))
       .finally(done);
+  });
+
+  it("repeated second fetch is a noop", () => {
+    fetchMock.mock(someUrl, someResult);
+
+    reduxStore.dispatch(Actions.fetch(someUrl));
+    reduxStore.dispatch(Actions.fetch(someUrl));
   });
 });

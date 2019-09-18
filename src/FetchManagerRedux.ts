@@ -10,26 +10,35 @@ import {
 import { Action } from "./utils/redux";
 
 export class Actions {
-  public static fetch = <T>(url: string) => async (dispatch: Dispatch) => {
-    dispatch(FetchActions.start(url));
-    try {
-      const response = await fetch(url);
-      if (response.ok) {
-        const data = await response.json();
-        dispatch(FetchActions.complete(url, data));
-        return data;
-      } else {
-        dispatch(
-          FetchActions.error(url, {
-            code: response.status,
-            message: response.statusText,
-          }),
-        );
-        throw new Error(response.statusText);
-      }
-    } catch (reason) {
-      dispatch(FetchActions.error(url, { code: 0, message: reason }));
-      throw reason;
+  public static fetch = <T>(url: string) => (
+    dispatch: Dispatch,
+    getState: () => State,
+  ) => {
+    const fetchState = select(getState(), url);
+    if (fetchState.status !== FetchStatus.Started) {
+      dispatch(FetchActions.start(url));
+      return fetch(url)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            dispatch(
+              FetchActions.error(url, {
+                code: response.status,
+                message: response.statusText,
+              }),
+            );
+            throw new Error(response.statusText);
+          }
+        })
+        .then((json) => {
+          dispatch(FetchActions.complete(url, json));
+          return json;
+        })
+        .catch((reason) => {
+          dispatch(FetchActions.error(url, { code: 0, message: reason }));
+          throw reason;
+        });
     }
   };
 }
