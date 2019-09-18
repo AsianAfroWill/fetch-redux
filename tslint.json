@@ -10,10 +10,10 @@
       true,
       {
         "grouped-imports": true,
-        "groups": ["^[^./][^/]*$", "^[^.]", "^\\."]
+        "groups": ["^(@[^/]+/)?[^./][^/]*$", "^[^.]", "^\\."]
       }
     ],
-    "semicolon": [true, "always"]
+    "semicolon": [true, "always", "strict-bound-class-methods"]
   },
   "rulesDirectory": []
 }

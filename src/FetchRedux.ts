@@ -11,43 +11,46 @@ export enum FetchStatus {
   Error,
 }
 
-interface State<D> {
+export interface State<D> {
   status: FetchStatus;
   data: D | undefined;
   error: RestStatus | undefined;
 }
 
 export enum ActionType {
-  Start = "start",
-  Complete = "complete",
-  Error = "error",
+  Start = "fetch:start",
+  Complete = "fetch:complete",
+  Error = "fetch:error",
 }
 
 export class Actions {
-  public static start(): Action<ActionType.Start> {
-    return createAction(ActionType.Start);
+  public static start(url: string): Action<ActionType.Start, { url: string }> {
+    return createAction(ActionType.Start, { url });
   }
 
-  public static complete<D>(data: D): Action<ActionType.Complete, { data: D }> {
-    return createAction(ActionType.Complete, { data });
+  public static complete<D>(
+    url: string,
+    data: D,
+  ): Action<ActionType.Complete, { url: string; data: D }> {
+    return createAction(ActionType.Complete, { url, data });
   }
 
   public static error(
+    url: string,
     error: RestStatus,
-  ): Action<ActionType.Error, { error: RestStatus }> {
-    return createAction(ActionType.Error, { error });
+  ): Action<ActionType.Error, { url: string; error: RestStatus }> {
+    return createAction(ActionType.Error, { url, error });
   }
 }
 
+const initialState = {
+  status: FetchStatus.NotStarted,
+  data: undefined,
+  error: undefined,
+};
+
 type FetchReducer<D = any> = Reducer<State<D>, Action<ActionType, D>>;
-export const reduce: FetchReducer = (state, action) => {
-  if (!state) {
-    return {
-      status: FetchStatus.NotStarted,
-      data: undefined,
-      error: undefined,
-    };
-  }
+export const reduce: FetchReducer = (state = initialState, action) => {
   switch (action.type) {
     case ActionType.Start:
       assert(
@@ -83,6 +86,6 @@ export const reduce: FetchReducer = (state, action) => {
       };
 
     default:
-      throw new Error(`Unknown action type: ${action.type}`);
+      return state;
   }
 };
